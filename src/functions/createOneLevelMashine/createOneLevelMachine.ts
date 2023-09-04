@@ -1,9 +1,14 @@
-import type { SchemaOneLevel, State, MachineContext, Machine } from "../../types/main";
+import type {
+  SchemaOneLevel,
+  State,
+  MachineContext,
+  Machine,
+} from "../../types/main";
 import createReadonly from "../../utils/createReadonly/createReadonly";
 import createState from "../../utils/createState/createState";
 import getNewState from "../../utils/getNewState/getNewState";
 
-export default function createMachine<
+export default function createOneLevelMachine<
   TargetName extends string,
   SignalName extends string
 >(
