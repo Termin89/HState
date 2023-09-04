@@ -26,6 +26,23 @@ export default function createActor<
   };
 
   const contextReadonly = createReadonly(context);
+  // - private
+  const getLastElemHistory = (): ElemHistory<TargetName> => {
+    const lastHistory = context.history[context.history.length - 1];
+    return lastHistory;
+  };
+
+  const pushHistory = (state: State<TargetName>) => {
+    const elemHistory = createElemHistory(state);
+    context.history.push(elemHistory);
+  };
+
+  const pushEndTimeState = (time: Date) => {
+    const lastElemHistory = getLastElemHistory();
+    lastElemHistory.endTime = time;
+  };
+
+  // ---
 
   const start = (targetName?: TargetName) => {
     const stateName = targetName ? targetName : schema.initState;
@@ -88,20 +105,6 @@ export default function createActor<
     }
     context.state = expectedState;
   };
-  const getLastElemHistory = (): ElemHistory<TargetName> => {
-    const lastHistory = context.history[context.history.length - 1];
-    return lastHistory;
-  };
-
-  const pushHistory = (state: State<TargetName>) => {
-    const elemHistory = createElemHistory(state);
-    context.history.push(elemHistory);
-  };
-
-  const pushEndTimeState = (time: Date) => {
-    const lastElemHistory = getLastElemHistory();
-    lastElemHistory.endTime = time;
-  };
 
   const pushDetailHistory = (value: object) => {
     const lastHistory = getLastElemHistory();
@@ -113,5 +116,6 @@ export default function createActor<
       lastHistory.detail.push(detailElemHistory);
     }
   };
+
   return { start, context: contextReadonly, send, pushDetailHistory };
 }

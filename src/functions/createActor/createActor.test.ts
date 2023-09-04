@@ -1,18 +1,20 @@
 // @ts-nocheck
-import { Schema } from "../../types/main";
+import { SchemaOneLevel } from "../../types/main";
 import createState from "../../utils/createState/createState";
 import createMachine from "../createMashine/createMachine";
 import createActor from "./createActor";
 
 /**
- * 1. Старт интерпритатора start()
+ * Актор в данном контексте это сущьность которая принимает в себя машину
+ * в качестве механизва переходов из состояния в состояние и хранит контекст, историю,
+ * 1. Старт актора start(state) - нужно проинициализировать машину
  *      - [ERROR] нет схемы State
  *      - [ERROR] не создаеться State
  *      - [ERROR] ошибка инициализации mashine
  *      - [SUCCESS] удачный старт
  *          - start() => void
  *          - start(targetName) => void
- * 2. Send - посылаем сигнал
+ * 2. send(signal) - посылаем сигнал
  *      - [ERROR] - данный сигнал не обрабатывается
  *      - [SUCCESS]
  *          - удачный переход в следующее состояние
@@ -25,7 +27,7 @@ describe("[TEST actor]", () => {
   const signals = ["NEXT", "ERROR"] as const;
   type Targets = (typeof states)[number];
   type Signals = (typeof signals)[number];
-  const schema: Schema<Targets, Signals> = {
+  const schema: SchemaOneLevel<Targets, Signals> = {
     initState: "FIRST",
     states: {
       FIRST: {
@@ -119,7 +121,7 @@ describe("[TEST actor]", () => {
       expect(newState).toEqual(expectedState);
     });
   });
-  describe("[Check write history]", () => {
+  describe("3. [Check write history]", () => {
     it("it write in history", () => {
       const mashime = createMachine(schema);
       const flow = createActor<Targets, Signals>(mashime);
@@ -161,7 +163,9 @@ describe("[TEST actor]", () => {
         type: "Check DONE - 2",
         msg: "Проверка на дабоаление",
       });
-
+      flow.context.history.forEach((story) =>
+        story.detail.forEach((detailElem) => console.log(detailElem))
+      );
       const isWriteStoryDetails = flow.context.history.every(
         (story) => !!story.detail.length
       );

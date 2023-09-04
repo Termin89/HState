@@ -1,7 +1,7 @@
 //@ts-nocheck
 import createMachine from "./createMachine";
 /**
- * 0. Валидность Schema - все кейсы валидности schema
+ * 0. Валидность SchemaOneLevel- все кейсы валидности schema
  *
  * 1. Инициализация - init(state)
  *      - ERROR - при повторной инициализации
@@ -14,15 +14,19 @@ import createMachine from "./createMachine";
  *      - VALID - валидный переход, проверить:
  *          - context.value - это новое ожидаемое состояние
  *          - context.history - история переходов
+ * 3. @-add Проверка волидации схемы - нужно придумать
  *
  * */
 
-import { Schema } from "../../types/main";
+import { SchemaOneLevel } from "../../types/main";
 
 describe("[TEST Machine] - createMachine", () => {
   const states = ["FIRST", "NEXTED", "DONED", "ERRORED"] as const;
   const signals = ["NEXT", "ERROR"] as const;
-  const schema: Schema<(typeof states)[number], (typeof signals)[number]> = {
+  const schema: SchemaOneLevel<
+    (typeof states)[number],
+    (typeof signals)[number]
+  > = {
     initState: "FIRST",
     states: {
       FIRST: {
@@ -79,7 +83,7 @@ describe("[TEST Machine] - createMachine", () => {
       const expectedContext = {
         isInit: true,
         name: undefined,
-        schema: schema
+        schema: schema,
       };
       const init = mashineForInit3.init();
       const isState = init && !(init instanceof Error);

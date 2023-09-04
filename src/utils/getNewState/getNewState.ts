@@ -5,7 +5,7 @@ export default function getNewState<
   TargetName extends string,
   SignalName extends string
 >(
-  schema: Schema<TargetName, SignalName>,
+  schema: SchemaOneLevel<TargetName, SignalName>,
   state: State<TargetName>,
   signalName: SignalName
 ) {

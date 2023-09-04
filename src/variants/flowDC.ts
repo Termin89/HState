@@ -1,4 +1,4 @@
-import { Schema } from "../types/main";
+import { SchemaOneLevel } from "../types/main";
 
 const states = [
   "AUTH",
@@ -30,7 +30,7 @@ const signals = [
 type TargetName = (typeof states)[number];
 type SignalName = (typeof signals)[number];
 
-export const schemaDC: Schema<TargetName, SignalName> = {
+export const schemaDC: SchemaOneLevel<TargetName, SignalName> = {
   initState: "AUTH",
   states: {
     AUTH: {

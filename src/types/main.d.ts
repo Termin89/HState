@@ -11,21 +11,14 @@ type State<TargetName extends string> = {
 // Тип схемы состояния
 type StateSchema<TargetName extends string, SignalName extends string> = {
   signals?: SignalsOptions<TargetName, SignalName>;
-  states?: StateSchema<TargetName, SignalName>;
   type?: TypesState;
-};
-
-// Сигнал - то что передаеться машине для перехода в следующее состояние
-type Signal<TargetName extends string> = {
-  actions?: Function[];
-  target: TargetName;
 };
 
 // Сигнатура сигналов в схеме
 type SignalsOptions<
   TargetName extends string,
   SignalName extends string
-> = Partial<Record<SignalName, Signal<TargetName> | TargetName>>;
+> = Partial<Record<SignalName, TargetName>>;
 
 // Сигнатура состояний в схеме
 type StatesOptions<
@@ -34,17 +27,16 @@ type StatesOptions<
 > = Record<TargetName, StateSchema<TargetName, SignalName>>;
 
 // Тип схемы
-type Schema<TargetName extends string, SignalName extends string> = {
+type SchemaOneLevel<TargetName extends string, SignalName extends string> = {
   context?: {};
   initState: TargetName;
   signals?: SignalsOptions<TargetName, SignalName>;
   states: StatesOptions<TargetName, SignalName>;
-  actions?: Function[];
 };
 
 // Обьект контекста машины
 type MachineContext<TargetName extends string, SignalName extends string> = {
-  schema: Schema<TargetName, SignalName>;
+  schema: SchemaOneLevel<TargetName, SignalName>;
   name?: string;
   isInit: boolean;
 };
@@ -83,10 +75,9 @@ export type {
   TypesState,
   State,
   StateSchema,
-  Signal,
   SignalsOptions,
   StatesOptions,
-  Schema,
+  SchemaOneLevel,
   MachineContext,
   Machine,
   Actor,

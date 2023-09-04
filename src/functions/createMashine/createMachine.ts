@@ -1,4 +1,4 @@
-import type { Schema, State, MachineContext, Machine } from "../../types/main";
+import type { SchemaOneLevel, State, MachineContext, Machine } from "../../types/main";
 import createReadonly from "../../utils/createReadonly/createReadonly";
 import createState from "../../utils/createState/createState";
 import getNewState from "../../utils/getNewState/getNewState";
@@ -7,7 +7,7 @@ export default function createMachine<
   TargetName extends string,
   SignalName extends string
 >(
-  schemaObj: Schema<TargetName, SignalName>,
+  schemaObj: SchemaOneLevel<TargetName, SignalName>,
   __context?: Partial<MachineContext<TargetName, SignalName>>
 ): Machine<TargetName, SignalName> {
   const context = Object.assign(

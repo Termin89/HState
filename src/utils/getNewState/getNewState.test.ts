@@ -9,7 +9,10 @@ import getNewState from "./getNewState";
 describe('[TEST UTIL] "getNewState"', () => {
   const states = ["FIRST", "TWO", "INFO", "END", "ERRORED", "NOVALID"] as const;
   const signals = ["NEXT", "ERROR"] as const;
-  const schema: Schema<(typeof states)[number], (typeof signals)[number]> = {
+  const schema: SchemaOneLevel<
+    (typeof states)[number],
+    (typeof signals)[number]
+  > = {
     initState: "FIRST",
     states: {
       FIRST: {
