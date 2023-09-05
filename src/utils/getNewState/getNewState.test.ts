@@ -1,5 +1,5 @@
 //@ts-nocheck
-import { Schema, State } from "../../types/main";
+import { SchemaOneLevel, State } from "../../types/main";
 import getNewState from "./getNewState";
 
 /**

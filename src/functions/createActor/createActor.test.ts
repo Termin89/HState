@@ -163,9 +163,9 @@ describe("[TEST actor]", () => {
         type: "Check DONE - 2",
         msg: "Проверка на дабоаление",
       });
-      flow.context.history.forEach((story) =>
-        story.detail.forEach((detailElem) => console.log(detailElem))
-      );
+      //   flow.context.history.forEach((story) =>
+      //     story.detail.forEach((detailElem) => console.log(detailElem))
+      //   );
       const isWriteStoryDetails = flow.context.history.every(
         (story) => !!story.detail.length
       );
