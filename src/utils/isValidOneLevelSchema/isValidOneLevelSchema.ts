@@ -3,13 +3,15 @@ import { SchemaOneLevel } from "../../types/main";
 export function isValidOneLevelSchema<T extends string, S extends string>(
   schema: SchemaOneLevel<T, S>
 ) {
-  if (!isObject(schema)) {
-    const error = new Error(`Схема не являеться обьектом: ${schema}`);
+  if (!isObject(schema) || !isNoAmptyObj(schema)) {
+    const error = new Error(
+      `Схема не являеться обьектом или пустой объект: ${schema}`
+    );
     error.name = "NO_OBJECT_SCHEMA";
   }
   const statesKeys = schema.states ? Object.keys(schema.states) : [];
 
-  if (!(isObject(schema.states) && statesKeys.length)) {
+  if (!(isObject(schema.states) && !isNoAmptyObj(schema.states))) {
     const error = new Error(
       `Поле states не являеться обьектом или в нем нет ключей его значение: ${schema.states}`
     );
@@ -51,9 +53,11 @@ export function isValidOneLevelSchema<T extends string, S extends string>(
   }
   //
   // states - signals
-  const statesValue = Object.values(schema.states);
   if (
-    !isStatesValid(statesValue as Array<Record<string, unknown>>, statesKeys)
+    !isStatesValid(
+      Object.values(schema.states) as Array<Record<string, unknown>>,
+      statesKeys
+    )
   ) {
     const error = new Error(
       `Обьект states: ${schema.states} не валиден - проверте сигналы или если это конечное состояние наличае type: "END"`
@@ -62,8 +66,6 @@ export function isValidOneLevelSchema<T extends string, S extends string>(
     return error;
   }
   //
-
-  statesValue;
 
   return true;
 }
