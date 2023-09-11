@@ -11,7 +11,7 @@ export function isValidOneLevelSchema<T extends string, S extends string>(
   }
   const statesKeys = schema.states ? Object.keys(schema.states) : [];
 
-  if (!(isObject(schema.states) && !isNoAmptyObj(schema.states))) {
+  if (!(isObject(schema.states) && isNoAmptyObj(schema.states))) {
     const error = new Error(
       `Поле states не являеться обьектом или в нем нет ключей его значение: ${schema.states}`
     );
