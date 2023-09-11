@@ -41,25 +41,29 @@ type MachineContext<TargetName extends string, SignalName extends string> = {
   isInit: boolean;
 };
 
-type Machine<TargetName extends string, SignalName extends string> = {
-  transition: (
-    state: State<TargetName>,
-    signal: SignalName
-  ) => Error | State<TargetName>;
-  init: (state?: State<TargetName>) => Error | State<TargetName>;
-  context: MachineContext<TargetName, SignalName>;
-};
+type Machine<TargetName extends string, SignalName extends string> =
+  | {
+      transition: (
+        state: State<TargetName>,
+        signal: SignalName
+      ) => Error | State<TargetName>;
+      init: (state?: State<TargetName>) => Error | State<TargetName>;
+      context: MachineContext<TargetName, SignalName>;
+    }
+  | Error;
 type ActorContext<TargetName extends string> = {
   isStart: boolean;
   state: State<TargetName> | undefined;
   history: ElemHistory<TargetName>[];
 };
-type Actor<TargetName extends string, SignalName extends string> = {
-  start: (targetName?: TargetName) => Error | undefined;
-  send: (SignalName: SignalName) => Error | undefined;
-  context: ActorContext<TargetName>;
-  pushDetailHistory: (value: object) => void;
-};
+type Actor<TargetName extends string, SignalName extends string> =
+  | {
+      start: (targetName?: TargetName) => Error | undefined;
+      send: (SignalName: SignalName) => Error | undefined;
+      context: ActorContext<TargetName>;
+      pushDetailHistory: (value: object) => void;
+    }
+  | Error;
 
 type DetailElemHistory = {
   time: Date;
