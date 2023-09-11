@@ -17,6 +17,9 @@ export default function createActor<
   mashine: Machine<TargetName, SignalName>,
   name?: string
 ): Actor<TargetName, SignalName> {
+  if (mashine instanceof Error) {
+    return mashine;
+  }
   const { schema } = mashine.context;
 
   const context: ActorContext<TargetName> = {

@@ -7,6 +7,7 @@ import type {
 import createReadonly from "../../utils/createReadonly/createReadonly";
 import createState from "../../utils/createState/createState";
 import getNewState from "../../utils/getNewState/getNewState";
+import { isValidOneLevelSchema } from "../../utils/isValidOneLevelSchema/isValidOneLevelSchema";
 
 export default function createOneLevelMachine<
   TargetName extends string,
@@ -25,6 +26,11 @@ export default function createOneLevelMachine<
 
   const contextReadonly = createReadonly(context);
   const { schema } = context;
+
+  const ifErrorSchema = isValidOneLevelSchema(schema);
+  if (ifErrorSchema instanceof Error) {
+    return ifErrorSchema;
+  }
 
   const init = (state?: State<TargetName>) => {
     if (context.isInit) {
