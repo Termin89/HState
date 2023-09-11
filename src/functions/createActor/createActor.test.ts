@@ -46,7 +46,9 @@ describe("[TEST actor]", () => {
       ERRORED: {
         type: "END",
       },
-      NO_SCHEMA: {},
+      NO_SCHEMA: {
+        type: 'END'
+      },
     },
     signals: {
       ERROR: "ERRORED",

@@ -53,6 +53,9 @@ describe("[TEST Machine] - createOneLevelMachine", () => {
   describe("1. [init()]", () => {
     it("[ERROR] - reInit", () => {
       const machineForInit1 = createOneLevelMachine(schema);
+      const isNoErrorMashine = !(machineForInit1 instanceof Error);
+      expect(isNoErrorMashine).toBeTruthy();
+
       const init1 = machineForInit1.init();
       const init2ERROR = machineForInit1.init();
 
@@ -74,61 +77,57 @@ describe("[TEST Machine] - createOneLevelMachine", () => {
     });
     it("[VALID] success init checked context", () => {
       const mashineForInit3 = createOneLevelMachine(schema);
-      const expectedState = {
-        value: "FIRST",
-        type: undefined,
-        previos: undefined,
-        done: false,
-      };
       const expectedContext = {
         isInit: true,
         name: undefined,
         schema: schema,
       };
+      const machineIsNoError = !(mashineForInit3 instanceof Error);
+      expect(machineIsNoError).toBeTruthy();
       const init = mashineForInit3.init();
       const isState = init && !(init instanceof Error);
       expect(isState).toBeTruthy();
       expect(mashineForInit3.context).toEqual(expectedContext);
     });
   });
-  describe("2. [transition()]", () => {
-    it("[ERROR] no init", () => {
-      const mashineForTransition1 = createOneLevelMachine(schema);
-      const transitionERROR = mashineForTransition1.transition();
+    describe("2. [transition()]", () => {
+      it("[ERROR] no init", () => {
+        const mashineForTransition1 = createOneLevelMachine(schema);
+        const transitionERROR = mashineForTransition1.transition();
 
-      const isError = transitionERROR instanceof Error;
-      expect(isError).toBeTruthy();
-      expect(transitionERROR.name).toBe("NO_INIT");
+        const isError = transitionERROR instanceof Error;
+        expect(isError).toBeTruthy();
+        expect(transitionERROR.name).toBe("NO_INIT");
+      });
+      it("[ERROR] is done mashine", () => {
+        const mashineForTransition2 = createOneLevelMachine(schema);
+        const stateDoned = {
+          value: "DONED",
+          done: true,
+        };
+        const init = mashineForTransition2.init(stateDoned);
+        const isState = init && !(init instanceof Error);
+        expect(isState).toBeTruthy();
+        const transitionERROR = mashineForTransition2.transition(
+          stateDoned,
+          "ERROR"
+        );
+        const isError = transitionERROR instanceof Error;
+        expect(isError).toBeTruthy();
+        expect(transitionERROR.name).toBe("IS_DONE");
+      });
+      it("[VALID] success transition", () => {
+        const mashineForTransition3 = createOneLevelMachine(schema);
+        const init = mashineForTransition3.init();
+        const isState = init && !(init instanceof Error);
+        expect(isState).toBeTruthy();
+        const transition = mashineForTransition3.transition(
+          { value: "FIRST" },
+          "NEXT"
+        );
+        const isNewState = transition && !(transition instanceof Error);
+        expect(isNewState).toBeTruthy;
+        expect(transition.value).toBe("NEXTED");
+      });
     });
-    it("[ERROR] is done mashine", () => {
-      const mashineForTransition2 = createOneLevelMachine(schema);
-      const stateDoned = {
-        value: "DONED",
-        done: true,
-      };
-      const init = mashineForTransition2.init(stateDoned);
-      const isState = init && !(init instanceof Error);
-      expect(isState).toBeTruthy();
-      const transitionERROR = mashineForTransition2.transition(
-        stateDoned,
-        "ERROR"
-      );
-      const isError = transitionERROR instanceof Error;
-      expect(isError).toBeTruthy();
-      expect(transitionERROR.name).toBe("IS_DONE");
-    });
-    it("[VALID] success transition", () => {
-      const mashineForTransition3 = createOneLevelMachine(schema);
-      const init = mashineForTransition3.init();
-      const isState = init && !(init instanceof Error);
-      expect(isState).toBeTruthy();
-      const transition = mashineForTransition3.transition(
-        { value: "FIRST" },
-        "NEXT"
-      );
-      const isNewState = transition && !(transition instanceof Error);
-      expect(isNewState).toBeTruthy;
-      expect(transition.value).toBe("NEXTED");
-    });
-  });
 });
