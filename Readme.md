@@ -1,8 +1,10 @@
 # - tasck
 
-    -- @-add - добавить проверку валидации в машину
-        -- Если не валидно выкидывать ошибку о том что схема не валидна - для дальнейшей обработки
-    -- @-add - добавить сборку с TS - в npm pac
+
+    -- @-add - класс Error - для каждой утилиты что возвращает Error
+        - createOneLevelMashine
+        - createActor
+        - isValidOneLevelSchema
 
 # - @-[name]
 
