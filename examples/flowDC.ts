@@ -1,4 +1,6 @@
-import { SchemaOneLevel } from "../types/main";
+import { createActor, createState } from "../src";
+import createOneLevelMachine from "../src/functions/createOneLevelMashine/createOneLevelMachine";
+import { SchemaOneLevel } from "../src/types/main";
 
 const states = [
   "AUTH",
