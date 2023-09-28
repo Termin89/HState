@@ -5,10 +5,10 @@ import {
   ElemHistory,
   Machine,
   State,
-} from "../../types/main";
-import createReadonly from "../../utils/createReadonly/createReadonly";
-import createState from "../../utils/createState/createState";
-import createElemHistory from "../../utils/createElemHistory/createElemHistory";
+} from "@/types/main";
+import createReadonly from "@/utils/createReadonly/createReadonly";
+import createState from "@/utils/createState/createState";
+import createElemHistory from "@/utils/createElemHistory/createElemHistory";
 
 export default function createActor<
   TargetName extends string,

@@ -1,4 +1,4 @@
-import { SchemaOneLevel } from "../../types/main";
+import { SchemaOneLevel } from "@/types/main";
 
 export function isValidOneLevelSchema<T extends string, S extends string>(
   schema: SchemaOneLevel<T, S>

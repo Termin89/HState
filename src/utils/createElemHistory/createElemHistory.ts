@@ -1,4 +1,4 @@
-import { ElemHistory, State } from "../../types/main";
+import { ElemHistory, State } from "@/types/main";
 
 export default function createElemHistory<TargetName extends string>(
   state: State<TargetName>

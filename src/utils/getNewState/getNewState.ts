@@ -1,4 +1,4 @@
-import type { State, Schema, Signal } from "../../types/main";
+import type { State, SchemaOneLevel } from "@/types/main";
 import createState from "../createState/createState";
 
 export default function getNewState<
@@ -20,7 +20,7 @@ export default function getNewState<
     return error;
   }
 
-  const signal: TargetName | Signal<TargetName> | undefined =
+  const signal: TargetName | undefined =
     (stateSchema.signals && stateSchema.signals[signalName]) || // Смотрим локальный сигнал
     (schema.signals && schema.signals[signalName]); // Если нет локального смотрим глобальный сигнал
 
@@ -35,7 +35,13 @@ export default function getNewState<
   if (typeof signal === "string") {
     newStateName = signal as TargetName;
   } else {
-    newStateName = signal.target;
+    const error = new Error(
+      `Данный сигнал: "${signal}", для состояния "${
+        state.value
+      }" в схеме не являеться строкой: "${typeof signal}"`
+    );
+    error.name = "ERROR_SIGNAL";
+    return error;
   }
 
   const newStateSchema = schema.states[newStateName];

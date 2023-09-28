@@ -1,4 +1,4 @@
-import type { StateSchema, State } from "../../types/main";
+import type { StateSchema, State } from "@/types/main";
 export default function createState<
   TargetName extends string,
   SignalName extends string
