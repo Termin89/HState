@@ -1,6 +1,6 @@
 // @ts-nocheck
-import { SchemaOneLevel } from "../../types/main";
-import createState from "../../utils/createState/createState";
+import { SchemaOneLevel } from "@/types/main";
+import createState from "@/utils/createState/createState";
 import createOneLevelMachine from "../createOneLevelMashine/createOneLevelMachine";
 import createActor from "./createActor";
 
@@ -165,9 +165,6 @@ describe("[TEST actor]", () => {
         type: "Check DONE - 2",
         msg: "Проверка на дабоаление",
       });
-      //   flow.context.history.forEach((story) =>
-      //     story.detail.forEach((detailElem) => console.log(detailElem))
-      //   );
       const isWriteStoryDetails = flow.context.history.every(
         (story) => !!story.detail.length
       );
