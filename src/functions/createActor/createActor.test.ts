@@ -3,6 +3,7 @@ import { SchemaOneLevel } from "@/types/main";
 import createState from "@/utils/createState/createState";
 import createOneLevelMachine from "../createOneLevelMashine/createOneLevelMachine";
 import createActor from "./createActor";
+import { describe, it, expect } from "vitest";
 
 /**
  * Актор в данном контексте это сущьность которая принимает в себя машину
@@ -47,7 +48,7 @@ describe("[TEST actor]", () => {
         type: "END",
       },
       NO_SCHEMA: {
-        type: 'END'
+        type: "END",
       },
     },
     signals: {

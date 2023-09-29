@@ -1,5 +1,5 @@
 import createState from "./createState";
-
+import { describe, it, expect } from "vitest";
 /**
  * createState - фабричный метод по созданию состояния
  */

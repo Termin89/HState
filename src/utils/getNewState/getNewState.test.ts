@@ -1,7 +1,7 @@
 //@ts-nocheck
 import { SchemaOneLevel, State } from "@/types/main";
 import getNewState from "./getNewState";
-
+import { describe, it, expect } from "vitest";
 /**
  * getNewState - чистая функция которая возвращает следующее состояние из схемы по сигналу
  *

@@ -1,6 +1,6 @@
 //@ts-nocheck
 import { isValidOneLevelSchema } from "./isValidOneLevelSchema";
-
+import { describe, it, expect } from "vitest";
 /** Проверяем валидность схемы:
  *  0. --
  *      - schema в принцепе являеться обьектом

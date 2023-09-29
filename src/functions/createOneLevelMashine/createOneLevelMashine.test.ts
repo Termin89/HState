@@ -1,6 +1,7 @@
 //@ts-nocheck
 import createOneLevelMachine from "./createOneLevelMachine";
 import { SchemaOneLevel } from "@/types/main";
+import { describe, it, expect } from "vitest";
 /**
  * 0. Валидность SchemaOneLevel- все кейсы валидности schema
  *
