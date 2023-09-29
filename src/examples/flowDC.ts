@@ -1,4 +1,6 @@
-import { SchemaOneLevel } from "../src/types/main";
+import createActor from '@/functions/createActor/createActor';
+import createOneLevelMachine from '@/functions/createOneLevelMashine/createOneLevelMachine';
+import { SchemaOneLevel } from '@/types/main';
 
 const states = [
   "AUTH",
@@ -98,3 +100,16 @@ export const schemaDC: SchemaOneLevel<TargetName, SignalName> = {
     CALL: "CALLING",
   },
 };
+
+const mashineDC = createOneLevelMachine(schemaDC)
+// createOneLevelMachine - может вернуть ERROR - поэтому сразу рекомендуеться обработать 
+// эту ошибку и уверенно использовать API уже после обработки ошибки - инаде даже IDE не подсветит подсказки
+if(mashineDC instanceof Error) throw new Error('mashineDC of Error')
+
+const flowDC = createActor(mashineDC)
+// createActor - может вернуть ERROR - поэтому сразу рекомендуеться обработать 
+// эту ошибку и уверенно использовать API уже после обработки ошибки - инаде даже IDE не подсветит подсказки
+if(flowDC instanceof Error) throw new Error('flowDC of Error')
+flowDC.start('AUTH')
+
+
