@@ -1,7 +1,7 @@
 // @ts-nocheck
-import { SchemaOneLevel } from "@/types/main";
+import { Schema } from "@/types/main";
 import createState from "@/utils/createState/createState";
-import createOneLevelMachine from "../createOneLevelMashine/createOneLevelMachine";
+import createMachine from "../createMashine/createMachine";
 import createActor from "./createActor";
 import { describe, it, expect } from "vitest";
 
@@ -28,7 +28,7 @@ describe("[TEST actor]", () => {
   const signals = ["NEXT", "ERROR"] as const;
   type Targets = (typeof states)[number];
   type Signals = (typeof signals)[number];
-  const schema: SchemaOneLevel<Targets, Signals> = {
+  const schema: Schema<Targets, Signals> = {
     initState: "FIRST",
     states: {
       FIRST: {
@@ -57,26 +57,26 @@ describe("[TEST actor]", () => {
   };
   describe("1. [start()]", () => {
     it("[ERROR] no state schema", () => {
-      const mashime = createOneLevelMachine(schema);
+      const mashime = createMachine(schema);
       const flow = createActor<Targets, Signals>(mashime);
       const isError = flow.start("FIRSTER");
       expect(isError.name).toBe("START_NO_STATE_SCHEMA");
     });
     it("[ERROR] init", () => {
-      const mashime = createOneLevelMachine(schema);
+      const mashime = createMachine(schema);
       const flow = createActor<Targets, Signals>(mashime);
       flow.start();
       const isError = flow.start();
       expect(isError.name).toBe("START_NO_INIT");
     });
     it("[SUCCESS] start()", () => {
-      const mashime = createOneLevelMachine(schema);
+      const mashime = createMachine(schema);
       const flow = createActor<Targets, Signals>(mashime);
       const isError = flow.start();
       expect(isError).toBeUndefined();
     });
     it("[SUCCESS] start(targetName)", () => {
-      const mashime = createOneLevelMachine(schema);
+      const mashime = createMachine(schema);
       const flow = createActor<Targets, Signals>(mashime);
       const isError = flow.start("NEXTED");
       expect(isError).toBeUndefined();
@@ -85,13 +85,13 @@ describe("[TEST actor]", () => {
 
   describe("2. [send()]", () => {
     it("[ERROR] no start", () => {
-      const mashime = createOneLevelMachine(schema);
+      const mashime = createMachine(schema);
       const flow = createActor<Targets, Signals>(mashime);
       const isError = flow.send("ERROR");
       expect(isError.name).toBe("SEND_NO_START");
     });
     it("[ERROR] transition - no valid signal", () => {
-      const mashime = createOneLevelMachine(schema);
+      const mashime = createMachine(schema);
       const flow = createActor<Targets, Signals>(mashime);
       const isStartError = flow.start();
       expect(isStartError).toBeUndefined();
@@ -100,7 +100,7 @@ describe("[TEST actor]", () => {
     });
 
     it("[SUCCESS] valid send", () => {
-      const mashime = createOneLevelMachine(schema);
+      const mashime = createMachine(schema);
       const flow = createActor<Targets, Signals>(mashime);
       const isStartError = flow.start();
       const startState = createState("FIRST", {
@@ -126,7 +126,7 @@ describe("[TEST actor]", () => {
   });
   describe("3. [Check write history]", () => {
     it("it write in history", () => {
-      const mashime = createOneLevelMachine(schema);
+      const mashime = createMachine(schema);
       const flow = createActor<Targets, Signals>(mashime);
       const isStartError = flow.start();
       expect(isStartError).toBeUndefined();
@@ -136,7 +136,7 @@ describe("[TEST actor]", () => {
       expect(isStory).toBeTruthy();
     });
     it("it write in detail history", () => {
-      const mashime = createOneLevelMachine(schema);
+      const mashime = createMachine(schema);
       const flow = createActor<Targets, Signals>(mashime);
       const isStartError = flow.start();
       expect(isStartError).toBeUndefined();

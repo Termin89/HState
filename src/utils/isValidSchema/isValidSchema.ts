@@ -1,7 +1,7 @@
-import { SchemaOneLevel } from "@/types/main";
+import { Schema } from "@/types/main";
 
-export function isValidOneLevelSchema<T extends string, S extends string>(
-  schema: SchemaOneLevel<T, S>
+export function isValidSchema<T extends string, S extends string>(
+  schema: Schema<T, S>
 ) {
   if (!isObject(schema) || !isNoAmptyObj(schema)) {
     const error = new Error(

@@ -1,5 +1,5 @@
 //@ts-nocheck
-import { isValidOneLevelSchema } from "./isValidOneLevelSchema";
+import { isValidSchema } from "./isValidSchema";
 import { describe, it, expect } from "vitest";
 /** Проверяем валидность схемы:
  *  0. --
@@ -17,19 +17,19 @@ import { describe, it, expect } from "vitest";
  *
  */
 
-import { SchemaOneLevel } from "../../types/main";
+import { Schema } from "../../types/main";
 
-describe("[TEST UTIL ] isValidOneLevelSchema", () => {
+describe("[TEST UTIL ] isValidSchema", () => {
   it("No Valid schema.states", () => {
-    const schemaAmptyStates: SchemaOneLevel<string, string> = {
+    const schemaAmptyStates: Schema<string, string> = {
       initState: "ONE",
       states: {},
     };
-    const schemaNoObjStates: SchemaOneLevel<string, string> = {
+    const schemaNoObjStates: Schema<string, string> = {
       initState: "ONE",
       states: 12,
     };
-    const schemaValisStates: SchemaOneLevel<string, string> = {
+    const schemaValisStates: Schema<string, string> = {
       initState: "ONE",
       states: {
         ONE: {
@@ -42,20 +42,18 @@ describe("[TEST UTIL ] isValidOneLevelSchema", () => {
         },
       },
     };
-    const schemaUndefinedStates: SchemaOneLevel<string, string> = {
+    const schemaUndefinedStates: Schema<string, string> = {
       initState: "ONE",
     };
 
     const schemaArray = [];
 
-    const noValidAmpty =
-      isValidOneLevelSchema(schemaAmptyStates) instanceof Error;
-    const noValidObject =
-      isValidOneLevelSchema(schemaNoObjStates) instanceof Error;
-    const valid = isValidOneLevelSchema(schemaValisStates);
+    const noValidAmpty = isValidSchema(schemaAmptyStates) instanceof Error;
+    const noValidObject = isValidSchema(schemaNoObjStates) instanceof Error;
+    const valid = isValidSchema(schemaValisStates);
     const statesUndefined =
-      isValidOneLevelSchema(schemaUndefinedStates) instanceof Error;
-    const schemaNoObj = isValidOneLevelSchema(schemaArray) instanceof Error;
+      isValidSchema(schemaUndefinedStates) instanceof Error;
+    const schemaNoObj = isValidSchema(schemaArray) instanceof Error;
 
     expect(noValidAmpty).toBeTruthy();
     expect(noValidObject).toBeTruthy();
@@ -65,7 +63,7 @@ describe("[TEST UTIL ] isValidOneLevelSchema", () => {
   });
 
   it("[initState]", () => {
-    const undefinedInitState: SchemaOneLevel<string, string> = {
+    const undefinedInitState: Schema<string, string> = {
       states: {
         ONE: {
           signals: {
@@ -77,7 +75,7 @@ describe("[TEST UTIL ] isValidOneLevelSchema", () => {
         },
       },
     };
-    const noStringInitState: SchemaOneLevel<string, string> = {
+    const noStringInitState: Schema<string, string> = {
       initState: 123,
       states: {
         ONE: {
@@ -90,7 +88,7 @@ describe("[TEST UTIL ] isValidOneLevelSchema", () => {
         },
       },
     };
-    const noValidString: SchemaOneLevel<string, string> = {
+    const noValidString: Schema<string, string> = {
       initState: "THREE",
       states: {
         ONE: {
@@ -103,7 +101,7 @@ describe("[TEST UTIL ] isValidOneLevelSchema", () => {
         },
       },
     };
-    const valid: SchemaOneLevel<string, string> = {
+    const valid: Schema<string, string> = {
       initState: "ONE",
       states: {
         ONE: {
@@ -116,18 +114,14 @@ describe("[TEST UTIL ] isValidOneLevelSchema", () => {
         },
       },
     };
-    expect(
-      isValidOneLevelSchema(undefinedInitState) instanceof Error
-    ).toBeTruthy();
-    expect(
-      isValidOneLevelSchema(noStringInitState) instanceof Error
-    ).toBeTruthy();
-    expect(isValidOneLevelSchema(noValidString) instanceof Error).toBeTruthy();
-    expect(isValidOneLevelSchema(valid)).toBeTruthy();
+    expect(isValidSchema(undefinedInitState) instanceof Error).toBeTruthy();
+    expect(isValidSchema(noStringInitState) instanceof Error).toBeTruthy();
+    expect(isValidSchema(noValidString) instanceof Error).toBeTruthy();
+    expect(isValidSchema(valid)).toBeTruthy();
   });
 
   it("[signals] Global", () => {
-    const schemaValid: SchemaOneLevel<string, string> = {
+    const schemaValid: Schema<string, string> = {
       initState: "ONE",
       states: {
         ONE: {
@@ -147,7 +141,7 @@ describe("[TEST UTIL ] isValidOneLevelSchema", () => {
       },
     };
 
-    const noValidValue: SchemaOneLevel<string, string> = {
+    const noValidValue: Schema<string, string> = {
       initState: "ONE",
       states: {
         ONE: {
@@ -167,7 +161,7 @@ describe("[TEST UTIL ] isValidOneLevelSchema", () => {
       },
     };
 
-    const noStringValue: SchemaOneLevel<string, string> = {
+    const noStringValue: Schema<string, string> = {
       initState: "ONE",
       states: {
         ONE: {
@@ -187,14 +181,14 @@ describe("[TEST UTIL ] isValidOneLevelSchema", () => {
       },
     };
 
-    expect(isValidOneLevelSchema(schemaValid)).toBeTruthy();
-    expect(isValidOneLevelSchema(noValidValue) instanceof Error).toBeTruthy();
-    expect(isValidOneLevelSchema(noStringValue) instanceof Error).toBeTruthy();
+    expect(isValidSchema(schemaValid)).toBeTruthy();
+    expect(isValidSchema(noValidValue) instanceof Error).toBeTruthy();
+    expect(isValidSchema(noStringValue) instanceof Error).toBeTruthy();
   });
 
   describe("[states]", () => {
     it("[states valid structyre]", () => {
-      const schemaValid: SchemaOneLevel<string, string> = {
+      const schemaValid: Schema<string, string> = {
         initState: "ONE",
         states: {
           ONE: {
@@ -213,7 +207,7 @@ describe("[TEST UTIL ] isValidOneLevelSchema", () => {
           ERROR: "ERRORED",
         },
       };
-      const schemaSignalEmpty: SchemaOneLevel<string, string> = {
+      const schemaSignalEmpty: Schema<string, string> = {
         initState: "ONE",
         states: {
           ONE: {
@@ -231,7 +225,7 @@ describe("[TEST UTIL ] isValidOneLevelSchema", () => {
         },
       };
 
-      const schemaNoTypeEnd: SchemaOneLevel<string, string> = {
+      const schemaNoTypeEnd: Schema<string, string> = {
         initState: "ONE",
         states: {
           ONE: {
@@ -248,13 +242,9 @@ describe("[TEST UTIL ] isValidOneLevelSchema", () => {
           ERROR: "ERRORED",
         },
       };
-      expect(isValidOneLevelSchema(schemaValid)).toBeTruthy();
-      expect(
-        isValidOneLevelSchema(schemaSignalEmpty) instanceof Error
-      ).toBeTruthy();
-      expect(
-        isValidOneLevelSchema(schemaNoTypeEnd) instanceof Error
-      ).toBeTruthy();
+      expect(isValidSchema(schemaValid)).toBeTruthy();
+      expect(isValidSchema(schemaSignalEmpty) instanceof Error).toBeTruthy();
+      expect(isValidSchema(schemaNoTypeEnd) instanceof Error).toBeTruthy();
     });
   });
 });

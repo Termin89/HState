@@ -1,11 +1,11 @@
-import type { State, SchemaOneLevel } from "@/types/main";
+import type { State, Schema } from "@/types/main";
 import createState from "../createState/createState";
 
 export default function getNewState<
   TargetName extends string,
   SignalName extends string
 >(
-  schema: SchemaOneLevel<TargetName, SignalName>,
+  schema: Schema<TargetName, SignalName>,
   state: State<TargetName>,
   signalName: SignalName
 ) {

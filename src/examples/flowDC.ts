@@ -1,6 +1,6 @@
-import createActor from '@/functions/createActor/createActor';
-import createOneLevelMachine from '@/functions/createOneLevelMashine/createOneLevelMachine';
-import { SchemaOneLevel } from '@/types/main';
+import createActor from "@/functions/createActor/createActor";
+import createMachine from "@/functions/createMashine/createMachine";
+import { Schema } from "@/types/main";
 
 const states = [
   "AUTH",
@@ -32,7 +32,7 @@ const signals = [
 type TargetName = (typeof states)[number];
 type SignalName = (typeof signals)[number];
 
-export const schemaDC: SchemaOneLevel<TargetName, SignalName> = {
+export const schemaDC: Schema<TargetName, SignalName> = {
   initState: "AUTH",
   states: {
     AUTH: {
@@ -101,15 +101,13 @@ export const schemaDC: SchemaOneLevel<TargetName, SignalName> = {
   },
 };
 
-const mashineDC = createOneLevelMachine(schemaDC)
-// createOneLevelMachine - может вернуть ERROR - поэтому сразу рекомендуеться обработать 
+const mashineDC = createMachine(schemaDC);
+// createMachine - может вернуть ERROR - поэтому сразу рекомендуеться обработать
 // эту ошибку и уверенно использовать API уже после обработки ошибки - инаде даже IDE не подсветит подсказки
-if(mashineDC instanceof Error) throw new Error('mashineDC of Error')
+if (mashineDC instanceof Error) throw new Error("mashineDC of Error");
 
-const flowDC = createActor(mashineDC)
-// createActor - может вернуть ERROR - поэтому сразу рекомендуеться обработать 
+const flowDC = createActor(mashineDC);
+// createActor - может вернуть ERROR - поэтому сразу рекомендуеться обработать
 // эту ошибку и уверенно использовать API уже после обработки ошибки - инаде даже IDE не подсветит подсказки
-if(flowDC instanceof Error) throw new Error('flowDC of Error')
-flowDC.start('AUTH')
-
-
+if (flowDC instanceof Error) throw new Error("flowDC of Error");
+flowDC.start("AUTH");

@@ -1,19 +1,14 @@
-import type {
-  SchemaOneLevel,
-  State,
-  MachineContext,
-  Machine,
-} from "@/types/main";
+import type { Schema, State, MachineContext, Machine } from "@/types/main";
 import createReadonly from "@/utils/createReadonly/createReadonly";
 import createState from "@/utils/createState/createState";
 import getNewState from "@/utils/getNewState/getNewState";
-import { isValidOneLevelSchema } from "@/utils/isValidOneLevelSchema/isValidOneLevelSchema";
+import { isValidSchema } from "@/utils/isValidSchema/isValidSchema";
 
-export default function createOneLevelMachine<
+export default function createMachine<
   TargetName extends string,
   SignalName extends string
 >(
-  schemaObj: SchemaOneLevel<TargetName, SignalName>,
+  schemaObj: Schema<TargetName, SignalName>,
   __context?: Partial<MachineContext<TargetName, SignalName>>
 ): Machine<TargetName, SignalName> {
   const context = Object.assign(
@@ -27,7 +22,7 @@ export default function createOneLevelMachine<
   const contextReadonly = createReadonly(context);
   const { schema } = context;
 
-  const ifErrorSchema = isValidOneLevelSchema(schema);
+  const ifErrorSchema = isValidSchema(schema);
   if (ifErrorSchema instanceof Error) {
     return ifErrorSchema;
   }

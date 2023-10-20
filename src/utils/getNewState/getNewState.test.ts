@@ -1,5 +1,5 @@
 //@ts-nocheck
-import { SchemaOneLevel, State } from "@/types/main";
+import { Schema, State } from "@/types/main";
 import getNewState from "./getNewState";
 import { describe, it, expect } from "vitest";
 /**
@@ -9,10 +9,7 @@ import { describe, it, expect } from "vitest";
 describe('[TEST UTIL] "getNewState"', () => {
   const states = ["FIRST", "TWO", "INFO", "END", "ERRORED", "NOVALID"] as const;
   const signals = ["NEXT", "ERROR"] as const;
-  const schema: SchemaOneLevel<
-    (typeof states)[number],
-    (typeof signals)[number]
-  > = {
+  const schema: Schema<(typeof states)[number], (typeof signals)[number]> = {
     initState: "FIRST",
     states: {
       FIRST: {

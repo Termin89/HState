@@ -24,10 +24,10 @@ type SignalsOptions<
 type StatesOptions<
   TargetName extends string,
   SignalName extends string
-> = Record<TargetName, StateSchema<TargetName, SignalName>>;
+> = Partial<Record<TargetName, StateSchema<TargetName, SignalName>>>;
 
 // Тип схемы
-type SchemaOneLevel<TargetName extends string, SignalName extends string> = {
+type Schema<TargetName extends string, SignalName extends string> = {
   context?: {};
   initState: TargetName;
   signals?: SignalsOptions<TargetName, SignalName>;
@@ -36,7 +36,7 @@ type SchemaOneLevel<TargetName extends string, SignalName extends string> = {
 
 // Обьект контекста машины
 type MachineContext<TargetName extends string, SignalName extends string> = {
-  schema: SchemaOneLevel<TargetName, SignalName>;
+  schema: Schema<TargetName, SignalName>;
   name?: string;
   isInit: boolean;
 };
@@ -81,7 +81,7 @@ export type {
   StateSchema,
   SignalsOptions,
   StatesOptions,
-  SchemaOneLevel,
+  Schema,
   MachineContext,
   Machine,
   Actor,

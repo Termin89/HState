@@ -1,9 +1,9 @@
 //@ts-nocheck
-import createOneLevelMachine from "./createOneLevelMachine";
-import { SchemaOneLevel } from "@/types/main";
+import createMachine from "./createMachine";
+import { Schema } from "@/types/main";
 import { describe, it, expect } from "vitest";
 /**
- * 0. Валидность SchemaOneLevel- все кейсы валидности schema
+ * 0. Валидность Schema- все кейсы валидности schema
  *
  * 1. Инициализация - init(state)
  *      - ERROR - при повторной инициализации
@@ -20,13 +20,10 @@ import { describe, it, expect } from "vitest";
  *
  * */
 
-describe("[TEST Machine] - createOneLevelMachine", () => {
+describe("[TEST Machine] - createMachine", () => {
   const states = ["FIRST", "NEXTED", "DONED", "ERRORED"] as const;
   const signals = ["NEXT", "ERROR"] as const;
-  const schema: SchemaOneLevel<
-    (typeof states)[number],
-    (typeof signals)[number]
-  > = {
+  const schema: Schema<(typeof states)[number], (typeof signals)[number]> = {
     initState: "FIRST",
     states: {
       FIRST: {
@@ -52,7 +49,7 @@ describe("[TEST Machine] - createOneLevelMachine", () => {
   };
   describe("1. [init()]", () => {
     it("[ERROR] - reInit", () => {
-      const machineForInit1 = createOneLevelMachine(schema);
+      const machineForInit1 = createMachine(schema);
       const isNoErrorMashine = !(machineForInit1 instanceof Error);
       expect(isNoErrorMashine).toBeTruthy();
 
@@ -69,14 +66,14 @@ describe("[TEST Machine] - createOneLevelMachine", () => {
       const initState = {
         value: "NEXTED1",
       };
-      const machineForInit2 = createOneLevelMachine(schema);
+      const machineForInit2 = createMachine(schema);
       const initError = machineForInit2.init(initState);
       const isError = initError instanceof Error;
       expect(isError).toBeTruthy();
       expect(initError.name).toBe("INIT_SCHEMA");
     });
     it("[VALID] success init checked context", () => {
-      const mashineForInit3 = createOneLevelMachine(schema);
+      const mashineForInit3 = createMachine(schema);
       const expectedContext = {
         isInit: true,
         name: undefined,
@@ -92,7 +89,7 @@ describe("[TEST Machine] - createOneLevelMachine", () => {
   });
   describe("2. [transition()]", () => {
     it("[ERROR] no init", () => {
-      const mashineForTransition1 = createOneLevelMachine(schema);
+      const mashineForTransition1 = createMachine(schema);
       const transitionERROR = mashineForTransition1.transition();
 
       const isError = transitionERROR instanceof Error;
@@ -100,7 +97,7 @@ describe("[TEST Machine] - createOneLevelMachine", () => {
       expect(transitionERROR.name).toBe("NO_INIT");
     });
     it("[ERROR] is done mashine", () => {
-      const mashineForTransition2 = createOneLevelMachine(schema);
+      const mashineForTransition2 = createMachine(schema);
       const stateDoned = {
         value: "DONED",
         done: true,
@@ -117,7 +114,7 @@ describe("[TEST Machine] - createOneLevelMachine", () => {
       expect(transitionERROR.name).toBe("IS_DONE");
     });
     it("[VALID] success transition", () => {
-      const mashineForTransition3 = createOneLevelMachine(schema);
+      const mashineForTransition3 = createMachine(schema);
       const init = mashineForTransition3.init();
       const isState = init && !(init instanceof Error);
       expect(isState).toBeTruthy();

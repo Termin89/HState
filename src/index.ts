@@ -1,5 +1,5 @@
 import createActor from "@/functions/createActor/createActor";
-import createOneLevelMachine from "@/functions/createOneLevelMashine/createOneLevelMachine";
+import createMachine from "@/functions/createMashine/createMachine";
 /*
  * Utils
  */
@@ -16,7 +16,7 @@ import type {
   StateSchema,
   SignalsOptions,
   StatesOptions,
-  SchemaOneLevel,
+  Schema,
   MachineContext,
   Machine,
   Actor,
@@ -27,7 +27,7 @@ import type {
 
 export {
   createActor,
-  createOneLevelMachine,
+  createMachine,
   createElemHistory,
   createReadonly,
   createState,
@@ -39,7 +39,7 @@ export type {
   StateSchema,
   SignalsOptions,
   StatesOptions,
-  SchemaOneLevel,
+  Schema,
   MachineContext,
   Machine,
   Actor,
