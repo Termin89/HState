@@ -2,7 +2,7 @@ import type { Schema, State, MachineContext, Machine } from "@/types/main";
 import createReadonly from "@/utils/createReadonly/createReadonly";
 import createState from "@/utils/createState/createState";
 import getNewState from "@/utils/getNewState/getNewState";
-import { isValidSchema } from "@/utils/isValidSchema/isValidSchema";
+import { isValidSchema } from "@/utils/checkers/isValidSchema/isValidSchema";
 
 export default function createMachine<
   TargetName extends string,

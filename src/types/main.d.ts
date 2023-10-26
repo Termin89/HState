@@ -1,4 +1,4 @@
-type TypesState = "END"; // Типы состояний например Конечная точка в данном случае "END"
+type TypesState = "END" | "CLOSE"; // Типы состояний например Конечная точка в данном случае "END"
 
 // Состояние
 type State<TargetName extends string> = {
@@ -24,7 +24,7 @@ type SignalsOptions<
 type StatesOptions<
   TargetName extends string,
   SignalName extends string
-> = Partial<Record<TargetName, StateSchema<TargetName, SignalName>>>;
+> = Record<TargetName, StateSchema<TargetName, SignalName>>;
 
 // Тип схемы
 type Schema<TargetName extends string, SignalName extends string> = {
@@ -33,6 +33,16 @@ type Schema<TargetName extends string, SignalName extends string> = {
   signals?: SignalsOptions<TargetName, SignalName>;
   states: StatesOptions<TargetName, SignalName>;
 };
+
+type ModeSchema<
+  TargetName extends string,
+  SignalName extends string
+> = Partial<{
+  context?: {};
+  initState?: TargetName;
+  signals?: Partial<SignalsOptions<TargetName, SignalName>>;
+  states?: Partial<StatesOptions<TargetName, SignalName>>;
+}>;
 
 // Обьект контекста машины
 type MachineContext<TargetName extends string, SignalName extends string> = {
@@ -75,6 +85,7 @@ type ElemHistory<TargetName extends string> = {
   value: State<TargetName>;
   detail: Array<DetailElemHistory>;
 };
+
 export type {
   TypesState,
   State,
@@ -88,4 +99,5 @@ export type {
   ActorContext,
   ElemHistory,
   DetailElemHistory,
+  ModeSchema,
 };

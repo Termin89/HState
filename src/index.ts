@@ -23,6 +23,7 @@ import type {
   ActorContext,
   ElemHistory,
   DetailElemHistory,
+  ModeSchema
 } from "@/types/main";
 
 export {
@@ -46,4 +47,5 @@ export type {
   ActorContext,
   ElemHistory,
   DetailElemHistory,
+  ModeSchema
 };
