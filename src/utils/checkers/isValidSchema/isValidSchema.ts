@@ -1,16 +1,38 @@
 import { Schema } from "@/types/main";
+import {
+  isNoAmptyObj,
+  isObject,
+  isStatesValid,
+  isValidInitState,
+  isValidSignals,
+} from "..";
+/**
+ *  [1] - schema            - не обьект     - Error
+ *  [2] - schema            - Пустой обьект - Error
+ *  [3] - schema.states     - не обьект     - Error
+ *  [4] - schema.states     - Пустой обьект - Error
+ *  [5] - schema.initState  - это не string - Error
+ *  [6] - schema.initState  - нет такого состояния - Error
+ *  [7] - schema.signals    - если в схеме но обьект - Error
+ *  [8] - schema.signals    - не валидные значения - Error
+ *  [9] - schema.states     - не валидные значения в signals - Error
+ */
 
 export function isValidSchema<T extends string, S extends string>(
   schema: Schema<T, S>
 ) {
+  // [1][2]
   if (!isObject(schema) || !isNoAmptyObj(schema)) {
     const error = new Error(
       `Схема не являеться обьектом или пустой объект: ${schema}`
     );
     error.name = "NO_OBJECT_SCHEMA";
   }
+  // ----
+
   const statesKeys = schema.states ? Object.keys(schema.states) : [];
 
+  // [3][4]
   if (!(isObject(schema.states) && isNoAmptyObj(schema.states))) {
     const error = new Error(
       `Поле states не являеться обьектом или в нем нет ключей его значение: ${schema.states}`
@@ -18,7 +40,9 @@ export function isValidSchema<T extends string, S extends string>(
     error.name = "NO_OBJECT_STATES";
     return error;
   }
-  //   initState
+  // -----
+
+  // [5][6]
   if (
     !(
       typeof schema.initState === "string" &&
@@ -31,8 +55,8 @@ export function isValidSchema<T extends string, S extends string>(
     error.name = "NO_VALID_INIT_STATE";
     return error;
   }
-  //
-  //    signals
+  // ---
+  // [7]
   if (!(schema.signals && isObject(schema.signals))) {
     const error = new Error(
       `Поле sinnals не являеться обьектом или в нем нет ключей его значение: ${schema.states}`
@@ -40,7 +64,7 @@ export function isValidSchema<T extends string, S extends string>(
     error.name = "NO_OBJECT_SIGNALS";
     return error;
   }
-
+  // [8]
   if (
     schema.signals &&
     !isValidSignals(statesKeys, schema.signals as Record<string, string>)
@@ -51,8 +75,8 @@ export function isValidSchema<T extends string, S extends string>(
     error.name = "NO_VALID_SIGNALS";
     return error;
   }
-  //
-  // states - signals
+  //------
+  // [9]
   if (
     !isStatesValid(
       Object.values(schema.states) as Array<Record<string, unknown>>,
@@ -68,41 +92,4 @@ export function isValidSchema<T extends string, S extends string>(
   //
 
   return true;
-}
-
-function isObject(obj: object) {
-  return Object.prototype.toString.call(obj) === "[object Object]";
-}
-
-function isValidInitState(initState: string, states: Array<string>) {
-  return states.includes(initState);
-}
-
-function isValidSignals(
-  statesKeys: Array<string>,
-  signals: Record<string, string>
-) {
-  return (
-    Object.values(signals).every((signal) => statesKeys.includes(signal)) &&
-    isNoAmptyObj(signals as any)
-  );
-}
-
-function isNoAmptyObj(obj: Record<string, unknown>) {
-  return !!Object.keys(obj).length;
-}
-
-function isStatesValid(
-  states: Array<Record<string, unknown>>,
-  statesKeys: Array<string>
-) {
-  const isValidsSignals = states
-    .filter((state) => state.signals)
-    .every((state) =>
-      isValidSignals(statesKeys, state.signals as Record<string, string>)
-    );
-  const isEndTypes = states
-    .filter((state) => !state.signals)
-    .every((state) => state.type === "END");
-  return isValidsSignals && isEndTypes;
 }
