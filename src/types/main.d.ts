@@ -86,6 +86,34 @@ type ElemHistory<TargetName extends string> = {
   detail: Array<DetailElemHistory>;
 };
 
+type SchemaModel<
+  TargetName extends string,
+  SignalName extends string,
+  ModeNames extends string
+> = {
+  value: () => Schema<TargetName, SignalName>;
+  checkout: (targetMod: ModeNames) => Error | true;
+};
+
+type SchemaParam<
+  TargetName extends string,
+  SignalName extends string,
+  ModeNames extends string
+> = {
+  reference: Schema<TargetName, SignalName>;
+  setting?: {
+    mods: Record<ModeNames, ModeSchema<TargetName, SignalName>>;
+    init: ModeNames;
+  };
+};
+
+//- To Errors
+type ErrorParam<Codes extends number> = {
+  code: Codes;
+  map: Record<Codes, string>;
+  name: string;
+  msg: string;
+};
 export type {
   TypesState,
   State,
@@ -100,4 +128,7 @@ export type {
   ElemHistory,
   DetailElemHistory,
   ModeSchema,
+  ErrorParam,
+  SchemaModel,
+  SchemaParam,
 };

@@ -6,6 +6,10 @@ import {
   isValidInitState,
   isValidSignals,
 } from "..";
+import {
+  ErrorValidSchema,
+  codesErrorValidSchema,
+} from "@/Errors/ErrorValidSchema";
 /**
  *  [1] - schema            - не обьект     - Error
  *  [2] - schema            - Пустой обьект - Error
@@ -22,59 +26,52 @@ export function isValidSchema<T extends string, S extends string>(
   schema: Schema<T, S>
 ) {
   // [1][2]
-  if (!isObject(schema) || !isNoAmptyObj(schema)) {
-    const error = new Error(
+  if (!isObject(schema) || !isNoAmptyObj(schema))
+    return new ErrorValidSchema(
+      codesErrorValidSchema.SCHEMA_TYPE,
       `Схема не являеться обьектом или пустой объект: ${schema}`
     );
-    error.name = "NO_OBJECT_SCHEMA";
-  }
   // ----
 
   const statesKeys = schema.states ? Object.keys(schema.states) : [];
 
   // [3][4]
-  if (!(isObject(schema.states) && isNoAmptyObj(schema.states))) {
-    const error = new Error(
+  if (!(isObject(schema.states) && isNoAmptyObj(schema.states)))
+    return new ErrorValidSchema(
+      codesErrorValidSchema.STATES_TYPE,
       `Поле states не являеться обьектом или в нем нет ключей его значение: ${schema.states}`
     );
-    error.name = "NO_OBJECT_STATES";
-    return error;
-  }
+
   // -----
 
-  // [5][6]
-  if (
-    !(
-      typeof schema.initState === "string" &&
-      isValidInitState(schema.initState, statesKeys)
-    )
-  ) {
-    const error = new Error(
-      `initState не валидное значение: ${schema.initState}`
+  // [5]
+  if (!(typeof schema.initState === "string"))
+    return new ErrorValidSchema(
+      codesErrorValidSchema.INIT_TYPE,
+      `Не правильный тип initState = ${schema.initState}`
     );
-    error.name = "NO_VALID_INIT_STATE";
-    return error;
-  }
+  // [6]
+  if (!isValidInitState(schema.initState, statesKeys))
+    return new ErrorValidSchema(
+      codesErrorValidSchema.INIT_INVALID,
+      `Не валидный тип initState = ${schema.initState}`
+    );
   // ---
   // [7]
-  if (!(schema.signals && isObject(schema.signals))) {
-    const error = new Error(
+  if (!(schema.signals && isObject(schema.signals)))
+    return new ErrorValidSchema(
+      codesErrorValidSchema.SIGNALS_TYPE,
       `Поле sinnals не являеться обьектом или в нем нет ключей его значение: ${schema.states}`
     );
-    error.name = "NO_OBJECT_SIGNALS";
-    return error;
-  }
   // [8]
   if (
     schema.signals &&
     !isValidSignals(statesKeys, schema.signals as Record<string, string>)
-  ) {
-    const error = new Error(
+  )
+    return new ErrorValidSchema(
+      codesErrorValidSchema.SIGNALS_INVALID,
       `Значение сигналов: ${schema.signals} не пересекаються с состояниями: ${schema.states}`
     );
-    error.name = "NO_VALID_SIGNALS";
-    return error;
-  }
   //------
   // [9]
   if (
@@ -82,13 +79,11 @@ export function isValidSchema<T extends string, S extends string>(
       Object.values(schema.states) as Array<Record<string, unknown>>,
       statesKeys
     )
-  ) {
-    const error = new Error(
+  )
+    return new ErrorValidSchema(
+      codesErrorValidSchema.STATES_INVALID_SIGNALS,
       `Обьект states: ${schema.states} не валиден - проверте сигналы или если это конечное состояние наличае type: "END"`
     );
-    error.name = "NO_VALID_SIGNALS";
-    return error;
-  }
   //
 
   return true;
