@@ -45,13 +45,21 @@ type ModeSchema<
 }>;
 
 // Обьект контекста машины
-type MachineContext<TargetName extends string, SignalName extends string> = {
-  schema: Schema<TargetName, SignalName>;
+type MachineContext<
+  TargetName extends string,
+  SignalName extends string,
+  ModeNames extends string
+> = {
+  schema: SchemaModel<TargetName, SignalName, ModeNames>;
   name?: string;
   isInit: boolean;
 };
 
-type Machine<TargetName extends string, SignalName extends string> =
+type Machine<
+  TargetName extends string,
+  SignalName extends string,
+  ModeNames extends string
+> =
   | {
       transition: (
         state: State<TargetName>,
@@ -59,6 +67,7 @@ type Machine<TargetName extends string, SignalName extends string> =
       ) => Error | State<TargetName>;
       init: (state?: State<TargetName>) => Error | State<TargetName>;
       context: MachineContext<TargetName, SignalName>;
+      schema: SchemaModel<TargetName, SignalName, ModeNames>;
     }
   | Error;
 type ActorContext<TargetName extends string> = {

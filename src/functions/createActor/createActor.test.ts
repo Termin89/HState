@@ -4,6 +4,8 @@ import createState from "@/utils/createState/createState";
 import createMachine from "../createMashine/createMachine";
 import createActor from "./createActor";
 import { describe, it, expect } from "vitest";
+import { createSchema } from "../createSchema/createSchema";
+import { ErrorCreateActor } from "@/Errors/ErrorCreateActor";
 
 /**
  * Актор в данном контексте это сущьность которая принимает в себя машину
@@ -28,7 +30,7 @@ describe("[TEST actor]", () => {
   const signals = ["NEXT", "ERROR"] as const;
   type Targets = (typeof states)[number];
   type Signals = (typeof signals)[number];
-  const schema: Schema<Targets, Signals> = {
+  const reference: Schema<Targets, Signals> = {
     initState: "FIRST",
     states: {
       FIRST: {
@@ -55,19 +57,22 @@ describe("[TEST actor]", () => {
       ERROR: "ERRORED",
     },
   };
+  const schema = createSchema({ reference: reference });
+  //   console.log("Console => ", schema);
   describe("1. [start()]", () => {
     it("[ERROR] no state schema", () => {
       const mashime = createMachine(schema);
       const flow = createActor<Targets, Signals>(mashime);
-      const isError = flow.start("FIRSTER");
-      expect(isError.name).toBe("START_NO_STATE_SCHEMA");
+      const errorFlow = flow.start("FIRSTER");
+      const isError = errorFlow instanceof ErrorCreateActor;
+      expect(isError).toBeTruthy();
     });
     it("[ERROR] init", () => {
       const mashime = createMachine(schema);
       const flow = createActor<Targets, Signals>(mashime);
       flow.start();
-      const isError = flow.start();
-      expect(isError.name).toBe("START_NO_INIT");
+      const isError = flow.start() instanceof ErrorCreateActor;
+      expect(isError).toBeTruthy();
     });
     it("[SUCCESS] start()", () => {
       const mashime = createMachine(schema);
@@ -87,16 +92,16 @@ describe("[TEST actor]", () => {
     it("[ERROR] no start", () => {
       const mashime = createMachine(schema);
       const flow = createActor<Targets, Signals>(mashime);
-      const isError = flow.send("ERROR");
-      expect(isError.name).toBe("SEND_NO_START");
+      const isError = flow.send("ERROR") instanceof ErrorCreateActor;
+      expect(isError).toBeTruthy();
     });
     it("[ERROR] transition - no valid signal", () => {
       const mashime = createMachine(schema);
       const flow = createActor<Targets, Signals>(mashime);
       const isStartError = flow.start();
       expect(isStartError).toBeUndefined();
-      const isSendError = flow.send("ERRORdd");
-      expect(isSendError.name).toBe("SEND_TRANSITION");
+      const isSendError = flow.send("ERRORdd") instanceof ErrorCreateActor;
+      expect(isSendError).toBeTruthy();
     });
 
     it("[SUCCESS] valid send", () => {

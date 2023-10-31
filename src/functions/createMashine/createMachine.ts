@@ -1,4 +1,10 @@
-import type { Schema, State, MachineContext, Machine } from "@/types/main";
+import type {
+  Schema,
+  State,
+  MachineContext,
+  Machine,
+  SchemaModel,
+} from "@/types/main";
 import createReadonly from "@/utils/createReadonly/createReadonly";
 import createState from "@/utils/createState/createState";
 import getNewState from "@/utils/getNewState/getNewState";
@@ -10,35 +16,36 @@ import {
 
 export default function createMachine<
   TargetName extends string,
-  SignalName extends string
+  SignalName extends string,
+  ModeNames extends string
 >(
-  schemaObj: Schema<TargetName, SignalName>,
-  __context?: Partial<MachineContext<TargetName, SignalName>>
-): Machine<TargetName, SignalName> {
+  schemaObj: SchemaModel<TargetName, SignalName, ModeNames>,
+  __context?: Partial<MachineContext<TargetName, SignalName, ModeNames>>
+): Machine<TargetName, SignalName, ModeNames> {
   const context = Object.assign(
     {
-      schema: createReadonly(schemaObj),
+      schema: schemaObj,
       isInit: false,
-    } as MachineContext<TargetName, SignalName>,
+    } as MachineContext<TargetName, SignalName, ModeNames>,
     __context
   );
 
   const contextReadonly = createReadonly(context);
   const { schema } = context;
 
-  const ifErrorCreateSchema = isValidSchema(schema);
-  if (ifErrorCreateSchema instanceof Error) {
-    return ifErrorCreateSchema;
+  if (schema instanceof Error) {
+    return schema;
   }
 
   const init = (state?: State<TargetName>) => {
+    const schemaReference = schema.value();
     if (context.isInit)
       return new ErrorCreateMashine(
         codesErrorCreateMashine.ALREDY_INIT,
         `Данная State Machine с именем: "${context.name}" уже проинициализированна`
       );
 
-    if (state && !schema.states[state.value])
+    if (state && !schemaReference.states[state.value])
       return new ErrorCreateMashine(
         codesErrorCreateMashine.STATE_SCHEMA,
         `В State Machine с именем: "${context.name}" нет схемы для состояния: "${state.value}"`
@@ -46,8 +53,8 @@ export default function createMachine<
     const initState = state
       ? state
       : createState<TargetName, SignalName>(
-          schema.initState,
-          schema.states[schema.initState]
+          schemaReference.initState,
+          schemaReference.states[schemaReference.initState]
         );
 
     if (!initState)
@@ -61,6 +68,7 @@ export default function createMachine<
   };
 
   const transition = (state: State<TargetName>, signalName: SignalName) => {
+    const schemaReference = schema.value();
     if (!context.isInit)
       return new ErrorCreateMashine(
         codesErrorCreateMashine.NO_INIT,
@@ -74,12 +82,12 @@ export default function createMachine<
       );
 
     const newState = getNewState<TargetName, SignalName>(
-      schema,
+      schemaReference,
       state,
       signalName
     );
     return newState;
   };
 
-  return { init, context: contextReadonly, transition };
+  return { init, context: contextReadonly, transition, schema };
 }

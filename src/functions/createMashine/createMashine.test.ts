@@ -3,6 +3,7 @@ import createMachine from "./createMachine";
 import { Schema } from "@/types/main";
 import { describe, it, expect } from "vitest";
 import { ErrorCreateMashine } from "../../Errors/ErrorCreateMashine";
+import { createSchema } from "../createSchema/createSchema";
 /**
  * 0. Валидность Schema- все кейсы валидности schema
  *
@@ -24,7 +25,7 @@ import { ErrorCreateMashine } from "../../Errors/ErrorCreateMashine";
 describe("[TEST Machine] - createMachine", () => {
   const states = ["FIRST", "NEXTED", "DONED", "ERRORED"] as const;
   const signals = ["NEXT", "ERROR"] as const;
-  const schema: Schema<(typeof states)[number], (typeof signals)[number]> = {
+  const reference: Schema<(typeof states)[number], (typeof signals)[number]> = {
     initState: "FIRST",
     states: {
       FIRST: {
@@ -48,6 +49,9 @@ describe("[TEST Machine] - createMachine", () => {
       ERROR: "ERRORED",
     },
   };
+  const schema = createSchema({
+    reference,
+  });
   describe("1. [init()]", () => {
     it("[ERROR] - reInit", () => {
       const machineForInit1 = createMachine(schema);

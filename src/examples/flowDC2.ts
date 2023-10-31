@@ -1,4 +1,5 @@
-import { Schema, StatesOptions } from "..";
+import { ModeSchema } from "@/types/main";
+import { Schema } from "..";
 
 const states = [
   "AUTH",
@@ -15,7 +16,15 @@ const states = [
   "CALLING",
 ] as const;
 
-const signals = ["ERROR", "REJECT", "NEXT", "SELECT", "TO_MK", "CALL"] as const;
+const signals = [
+  "ERROR",
+  "REJECT",
+  "NEXT",
+  "SELECT",
+  "NO_VALID",
+  "TO_MK",
+  "CALL",
+] as const;
 
 type TargetName = (typeof states)[number];
 type SignalName = (typeof signals)[number];
@@ -29,10 +38,15 @@ const generalSchema: Schema<TargetName, SignalName> = {
         NEXT: "WRITE_SMS",
       },
     },
-    WRITE_SMS: {
+    PASSPORT_FULL: {
       signals: {
-        NEXT: "PASSPORT_FULL",
-        ERROR: "WRITE_SMS",
+        NEXT: "DELIVERY",
+      },
+    },
+    DELIVERY: {
+      signals: {
+        NEXT: "DONED",
+        CALL: "CALLING",
       },
     },
     ERRORED: {
@@ -50,6 +64,18 @@ const generalSchema: Schema<TargetName, SignalName> = {
     DONED: {
       type: "END",
     },
+    WRITE_SMS: {
+      type: "CLOSE",
+    },
+    PASSPORT_NUMBER: {
+      type: "CLOSE",
+    },
+    CODE_WORD: {
+      type: "CLOSE",
+    },
+    SELECT_CARD: {
+      type: "CLOSE",
+    },
   },
   signals: {
     ERROR: "ERRORED",
@@ -59,20 +85,37 @@ const generalSchema: Schema<TargetName, SignalName> = {
   },
 };
 
-const streetModSchema: Schema<TargetName, SignalName> = {
-  initState: "AUTH",
+const streetModSchema: ModeSchema<TargetName, SignalName> = {
   states: {
-    PASSPORT_FULL: {
+    WRITE_SMS: {
       signals: {
-        NEXT: "DELIVERY",
-      },
-    },
-    DELIVERY: {
-      signals: {
-        NEXT: "DONED",
-        CALL: "CALLING",
+        NEXT: "PASSPORT_FULL",
+        ERROR: "WRITE_SMS",
       },
     },
   },
 };
 
+const baseModSchema: ModeSchema<TargetName, SignalName> = {
+  states: {
+    WRITE_SMS: {
+      signals: {
+        NEXT: "PASSPORT_NUMBER",
+        ERROR: "WRITE_SMS",
+      },
+    },
+    PASSPORT_NUMBER: {
+      signals: {
+        NEXT: "CODE_WORD",
+        NO_VALID: "PASSPORT_FULL",
+      },
+    },
+    CODE_WORD: {
+      signals: {
+        NO_VALID: "PASSPORT_FULL",
+        SELECT: "SELECT_CARD",
+        NEXT: "DELIVERY",
+      },
+    },
+  },
+};

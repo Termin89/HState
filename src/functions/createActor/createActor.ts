@@ -4,24 +4,31 @@ import {
   DetailElemHistory,
   ElemHistory,
   Machine,
+  MachineContext,
   State,
 } from "@/types/main";
 import createReadonly from "@/utils/createReadonly/createReadonly";
 import createState from "@/utils/createState/createState";
 import createElemHistory from "@/utils/createElemHistory/createElemHistory";
-
+import {
+  ErrorCreateActor,
+  codesErrorCreateActor,
+} from "@/Errors/ErrorCreateActor";
 export default function createActor<
   TargetName extends string,
-  SignalName extends string
+  SignalName extends string,
+  ModeNames extends string
 >(
-  mashine: Machine<TargetName, SignalName>,
+  mashine: Machine<TargetName, SignalName, ModeNames>,
   name?: string
 ): Actor<TargetName, SignalName> {
-  if (mashine instanceof Error) {
-    return mashine;
-  }
-  const { schema } = mashine.context;
+  if (mashine instanceof Error)
+    return new ErrorCreateActor(
+      codesErrorCreateActor.MASHINE,
+      `${mashine.message}`
+    );
 
+  const { schema } = mashine;
   const context: ActorContext<TargetName> = {
     isStart: false,
     state: undefined,
@@ -48,59 +55,56 @@ export default function createActor<
   // ---
 
   const start = (targetName?: TargetName) => {
-    const stateName = targetName ? targetName : schema.initState;
-    const stateSchema = schema.states[stateName];
+    const schemaReference = schema.value();
+    const stateName = targetName ? targetName : schemaReference.initState;
+    const stateSchema = schemaReference.states[stateName];
 
-    if (!stateSchema) {
-      const error = new Error(
+    if (!stateSchema)
+      return new ErrorCreateActor(
+        codesErrorCreateActor.NO_STATE_SCHEMA,
         `createActor: ${name} start() не имеет схемы состояния`
       );
-      error.name = "START_NO_STATE_SCHEMA";
-      return error;
-    }
+
     const firstState = createState(stateName, stateSchema);
-    if (firstState instanceof Error) {
-      const error = new Error(
+    if (firstState instanceof Error)
+      return new ErrorCreateActor(
+        codesErrorCreateActor.NO_STATE_SCHEMA,
         `createActor: ${name} start() нет первого состояния`
       );
-      error.name = "START_NO_STATE";
-      return error;
-    }
+
     const init = mashine.init(firstState);
-    if (init instanceof Error) {
-      const error = new Error(
-        `createActor: ${name} ошибка инициализации machine`
+    if (init instanceof Error)
+      return new ErrorCreateActor(
+        codesErrorCreateActor.NO_STATE_SCHEMA,
+        init.message
       );
-      error.name = "START_NO_INIT";
-      return error;
-    }
+
     context.isStart = true;
     context.state = init;
     pushHistory(init);
   };
 
   const send = (signalName: SignalName) => {
-    if (!context.isStart) {
-      const error = new Error(
+    if (!context.isStart)
+      return new ErrorCreateActor(
+        codesErrorCreateActor.NO_START,
         `createActor: ${name} send() актор не запущен чтобы делать`
       );
-      error.name = "SEND_NO_START";
-      return error;
-    }
-    if (!context.state) {
-      const error = new Error(
+
+    if (!context.state)
+      return new ErrorCreateActor(
+        codesErrorCreateActor.NO_ACTYAL_STATE,
         `createActor: ${name} send() нет актуальнго состояния`
       );
-      error.name = "SEND_NO_STATE";
-      return error;
-    }
+
     const expectedState = mashine.transition(context.state, signalName);
 
-    if (expectedState instanceof Error) {
-      const error = new Error(`createActor: ${name} send() ошиба перехода`);
-      error.name = "SEND_TRANSITION";
-      return error;
-    }
+    if (expectedState instanceof Error)
+      return new ErrorCreateActor(
+        codesErrorCreateActor.NO_ACTYAL_STATE,
+        expectedState.message
+      );
+
     pushEndTimeState(new Date());
     pushHistory(expectedState);
     if (expectedState.done) {
