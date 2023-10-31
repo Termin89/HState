@@ -1,14 +1,7 @@
-import type {
-  Schema,
-  State,
-  MachineContext,
-  Machine,
-  SchemaModel,
-} from "@/types/main";
+import type { State, MachineContext, Machine, SchemaModel } from "@/types/main";
 import createReadonly from "@/utils/createReadonly/createReadonly";
 import createState from "@/utils/createState/createState";
 import getNewState from "@/utils/getNewState/getNewState";
-import { isValidSchema } from "@/utils/checkers/isValidSchema/isValidSchema";
 import {
   ErrorCreateMashine,
   codesErrorCreateMashine,

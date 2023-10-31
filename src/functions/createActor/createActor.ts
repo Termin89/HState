@@ -4,7 +4,6 @@ import {
   DetailElemHistory,
   ElemHistory,
   Machine,
-  MachineContext,
   State,
 } from "@/types/main";
 import createReadonly from "@/utils/createReadonly/createReadonly";
