@@ -15,6 +15,18 @@
         - вывод createSchema
             - value - это актуальная схема
             - checkout - это метод переключения между схемами
+    -- @-add - createContext
+        - это понтексты утилит
+        - чтобы уметь watch'ить изменения нужно будет деграть метод context.change()
+            - возвращает readonly:
+                - previous - предыдущее состояние
+                - next - следующее состояние
+    -- @-add - createWatchContext
+        - аргументы:
+            - ctx - contextble - обьект context.change()
+            - callback - в который передаються из
+                - previous - предыдущее состояние
+                - next - следующее состояние
 
 # - @-[name]
 
