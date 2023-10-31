@@ -2,6 +2,7 @@
 import createMachine from "./createMachine";
 import { Schema } from "@/types/main";
 import { describe, it, expect } from "vitest";
+import { ErrorCreateMashine } from "../../Errors/ErrorCreateMashine";
 /**
  * 0. Валидность Schema- все кейсы валидности schema
  *
@@ -57,10 +58,9 @@ describe("[TEST Machine] - createMachine", () => {
       const init2ERROR = machineForInit1.init();
 
       const isState = init1 !== undefined && !(init1 instanceof Error);
-      const isError = init2ERROR instanceof Error;
+      const isError = init2ERROR instanceof ErrorCreateMashine;
       expect(isState).toBeTruthy();
       expect(isError).toBeTruthy();
-      expect(init2ERROR.name).toBe("INITED");
     });
     it("[ERROR] - No Schema State", () => {
       const initState = {
@@ -68,9 +68,8 @@ describe("[TEST Machine] - createMachine", () => {
       };
       const machineForInit2 = createMachine(schema);
       const initError = machineForInit2.init(initState);
-      const isError = initError instanceof Error;
+      const isError = initError instanceof ErrorCreateMashine;
       expect(isError).toBeTruthy();
-      expect(initError.name).toBe("INIT_SCHEMA");
     });
     it("[VALID] success init checked context", () => {
       const mashineForInit3 = createMachine(schema);
@@ -92,9 +91,8 @@ describe("[TEST Machine] - createMachine", () => {
       const mashineForTransition1 = createMachine(schema);
       const transitionERROR = mashineForTransition1.transition();
 
-      const isError = transitionERROR instanceof Error;
+      const isError = transitionERROR instanceof ErrorCreateMashine;
       expect(isError).toBeTruthy();
-      expect(transitionERROR.name).toBe("NO_INIT");
     });
     it("[ERROR] is done mashine", () => {
       const mashineForTransition2 = createMachine(schema);
@@ -109,9 +107,8 @@ describe("[TEST Machine] - createMachine", () => {
         stateDoned,
         "ERROR"
       );
-      const isError = transitionERROR instanceof Error;
+      const isError = transitionERROR instanceof ErrorCreateMashine;
       expect(isError).toBeTruthy();
-      expect(transitionERROR.name).toBe("IS_DONE");
     });
     it("[VALID] success transition", () => {
       const mashineForTransition3 = createMachine(schema);

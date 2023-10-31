@@ -58,10 +58,15 @@ export function isValidSchema<T extends string, S extends string>(
     );
   // ---
   // [7]
-  if (!(schema.signals && isObject(schema.signals)))
+  if (
+    schema.signals &&
+    (!isObject(schema.signals) || !isNoAmptyObj(schema.signals))
+  )
     return new ErrorValidSchema(
       codesErrorValidSchema.SIGNALS_TYPE,
-      `Поле sinnals не являеться обьектом или в нем нет ключей его значение: ${schema.states}`
+      `Поле sinnals не являеться обьектом или в нем нет ключей его значение: ${JSON.stringify(
+        schema.states
+      )}`
     );
   // [8]
   if (
