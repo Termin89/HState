@@ -19,12 +19,13 @@ import { mergeSchema } from "@/utils/mergeSchema/mergeSchema";
  *  - валидность сгенерированных схем из mods
  * */
 
-export function createSchema<
+export default function createSchema<
   TargetName extends string,
   SignalName extends string,
-  ModeNames extends string
+  ModeNames extends string,
+  T extends ModeNames
 >(
-  param: SchemaParam<TargetName, SignalName, ModeNames>
+  param: SchemaParam<TargetName, SignalName, ModeNames, T>
 ): SchemaModel<TargetName, SignalName, ModeNames> | Error {
   if (!(param instanceof Object)) {
     return new ErrorCreateSchema(

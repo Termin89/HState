@@ -4,7 +4,7 @@ import createState from "@/utils/createState/createState";
 import createMachine from "../createMashine/createMachine";
 import createActor from "./createActor";
 import { describe, it, expect } from "vitest";
-import { createSchema } from "../createSchema/createSchema";
+import createSchema  from "../createSchema/createSchema";
 import { ErrorCreateActor } from "@/Errors/ErrorCreateActor";
 
 /**

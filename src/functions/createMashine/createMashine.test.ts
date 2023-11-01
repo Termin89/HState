@@ -3,7 +3,7 @@ import createMachine from "./createMachine";
 import { Schema } from "@/types/main";
 import { describe, it, expect } from "vitest";
 import { ErrorCreateMashine } from "../../Errors/ErrorCreateMashine";
-import { createSchema } from "../createSchema/createSchema";
+import createSchema from "../createSchema/createSchema";
 /**
  * 0. Валидность Schema- все кейсы валидности schema
  *
@@ -23,14 +23,15 @@ import { createSchema } from "../createSchema/createSchema";
  * */
 
 describe("[TEST Machine] - createMachine", () => {
-  const states = ["FIRST", "NEXTED", "DONED", "ERRORED"] as const;
-  const signals = ["NEXT", "ERROR"] as const;
+  const states = ["FIRST", "NEXTED", "DONED", "ERRORED", "CLOSED"] as const;
+  const signals = ["NEXT", "ERROR", "TO"] as const;
   const reference: Schema<(typeof states)[number], (typeof signals)[number]> = {
     initState: "FIRST",
     states: {
       FIRST: {
         signals: {
           NEXT: "NEXTED",
+          TO: "CLOSED",
         },
       },
       NEXTED: {
@@ -43,6 +44,9 @@ describe("[TEST Machine] - createMachine", () => {
       },
       ERRORED: {
         type: "END",
+      },
+      CLOSED: {
+        type: "CLOSE",
       },
     },
     signals: {
@@ -110,6 +114,21 @@ describe("[TEST Machine] - createMachine", () => {
       const transitionERROR = mashineForTransition2.transition(
         stateDoned,
         "ERROR"
+      );
+      const isError = transitionERROR instanceof ErrorCreateMashine;
+      expect(isError).toBeTruthy();
+    });
+    it("[ERROR] is CLOSE state", () => {
+      const mashineForTransition2 = createMachine(schema);
+      const init = mashineForTransition2.init();
+      const isState = init && !(init instanceof Error);
+      expect(isState).toBeTruthy();
+      const stateFirst = {
+        value: "FIRST",
+      };
+      const transitionERROR = mashineForTransition2.transition(
+        stateFirst,
+        "TO"
       );
       const isError = transitionERROR instanceof ErrorCreateMashine;
       expect(isError).toBeTruthy();

@@ -1,10 +1,16 @@
-type TypesState = "END" | "CLOSE"; // Типы состояний например Конечная точка в данном случае "END"
+/**
+ * Типы состояний
+ *  -- "END"   - конечное состояние - переход из нее запрещен
+ *  -- "CLOSE" - закрытое состояние - переход в него запрещен
+ * */
+type TypesState = "END" | "CLOSE";
 
 // Состояние
 type State<TargetName extends string> = {
   value: TargetName;
   type?: TypesState;
   done?: boolean;
+  close?: boolean;
   previos?: State<TargetName>;
 };
 
@@ -107,12 +113,13 @@ type SchemaModel<
 type SchemaParam<
   TargetName extends string,
   SignalName extends string,
-  ModeNames extends string
+  ModeNames extends string,
+  T extends ModeNames
 > = {
   reference: Schema<TargetName, SignalName>;
   setting?: {
     mods: Record<ModeNames, ModeSchema<TargetName, SignalName>>;
-    init: ModeNames;
+    init: T;
   };
 };
 

@@ -1,4 +1,4 @@
-import { isValidSignals } from '.';
+import { isValidSignals } from ".";
 
 export function isStatesValid(
   states: Array<Record<string, unknown>>,
@@ -11,6 +11,6 @@ export function isStatesValid(
     );
   const isEndTypes = states
     .filter((state) => !state.signals)
-    .every((state) => state.type === "END");
+    .every((state) => state.type === "END" || state.type === "CLOSE");
   return isValidsSignals && isEndTypes;
 }

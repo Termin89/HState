@@ -49,6 +49,7 @@ describe('[TEST UTIL] "getNewState"', () => {
       value: "FIRST",
       previos: undefined,
       done: false,
+      close: false,
       type: undefined,
     };
 
@@ -56,6 +57,7 @@ describe('[TEST UTIL] "getNewState"', () => {
       value: "TWO",
       type: undefined,
       previos: state,
+      close: false,
       done: false,
     };
 
@@ -69,6 +71,7 @@ describe('[TEST UTIL] "getNewState"', () => {
       value: "TWO",
       previos: undefined,
       done: false,
+      close: false,
       type: undefined,
     };
 
@@ -76,6 +79,7 @@ describe('[TEST UTIL] "getNewState"', () => {
       value: "INFO",
       type: undefined,
       previos: state,
+      close: false,
       done: false,
     };
 
@@ -88,6 +92,7 @@ describe('[TEST UTIL] "getNewState"', () => {
       value: "FIRST",
       previos: undefined,
       done: false,
+      close: false,
       type: undefined,
     };
 
@@ -95,6 +100,7 @@ describe('[TEST UTIL] "getNewState"', () => {
       value: "ERRORED",
       type: "END",
       previos: state,
+      close: false,
       done: true,
     };
 
@@ -107,6 +113,7 @@ describe('[TEST UTIL] "getNewState"', () => {
       value: "FIRST",
       previos: undefined,
       done: false,
+      close: false,
       type: undefined,
     };
 
@@ -123,6 +130,7 @@ describe('[TEST UTIL] "getNewState"', () => {
       value: "Bingo",
       previos: undefined,
       done: false,
+      close: false,
       type: undefined,
     };
 
@@ -139,6 +147,7 @@ describe('[TEST UTIL] "getNewState"', () => {
       value: "NOVALID",
       previos: undefined,
       done: false,
+      close: false,
       type: undefined,
     };
 

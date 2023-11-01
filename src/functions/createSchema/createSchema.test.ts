@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createSchema } from "./createSchema";
+import createSchema from "./createSchema";
 import { ErrorCreateSchema } from "../../Errors/ErrorCreateSchema";
 /**
  * 0. при инициализации проверить валидность схемы:

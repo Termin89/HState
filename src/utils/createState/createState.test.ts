@@ -15,6 +15,7 @@ describe('[TEST UTIL] "createState" ', () => {
     expect(newState).toEqual({
       value: "FIRST",
       done: true,
+      close: false,
       type: "END",
       previos: undefined,
     });

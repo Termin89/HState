@@ -12,5 +12,6 @@ export default function createState<
     type: stateSchema.type,
     previos: previos,
     done: stateSchema.type === "END" ? true : false,
+    close: stateSchema.type === "CLOSE" ? true : false,
   };
 }

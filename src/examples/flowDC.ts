@@ -1,6 +1,6 @@
-import createActor from "@/functions/createActor/createActor";
-import createMachine from "@/functions/createMashine/createMachine";
-import { Schema } from "@/types/main";
+import { ModeSchema } from "@/types/main";
+import { Schema, createActor, createMachine } from "..";
+import createSchema from "@/functions/createSchema/createSchema";
 
 const states = [
   "AUTH",
@@ -9,30 +9,21 @@ const states = [
   "PASSPORT_NUMBER",
   "CODE_WORD",
   "DELIVERY",
-  "SELECT_CARD",
   "MK",
-  "ERRORED",
   "REJECTED",
   "DONED",
   "CALLING",
 ] as const;
 
-const signals = [
-  "ERROR",
-  "REJECT",
-  "NEXT",
-  "NEXT_BASE",
-  "CHANGE_BASE",
-  "IN_VALID_CODE",
-  "SELECT",
-  "TO_MK",
-  "CALL",
-] as const;
+const signals = ["REJECT", "NEXT", "ERROR", "NO_VALID"] as const;
+
+const mods = ["base", "street"] as const;
 
 type TargetName = (typeof states)[number];
 type SignalName = (typeof signals)[number];
+type ModeNames = (typeof mods)[number];
 
-export const schemaDC: Schema<TargetName, SignalName> = {
+const reference: Schema<TargetName, SignalName> = {
   initState: "AUTH",
   states: {
     AUTH: {
@@ -41,44 +32,16 @@ export const schemaDC: Schema<TargetName, SignalName> = {
         NEXT: "WRITE_SMS",
       },
     },
-    WRITE_SMS: {
-      signals: {
-        NEXT: "PASSPORT_FULL",
-        NEXT_BASE: "PASSPORT_NUMBER",
-        ERROR: "WRITE_SMS",
-      },
-    },
     PASSPORT_FULL: {
       signals: {
         NEXT: "DELIVERY",
       },
     },
-    PASSPORT_NUMBER: {
-      signals: {
-        NEXT: "CODE_WORD",
-        CHANGE_BASE: "PASSPORT_FULL",
-      },
-    },
-    CODE_WORD: {
-      signals: {
-        IN_VALID_CODE: "PASSPORT_FULL",
-        NEXT: "DELIVERY",
-        SELECT: "SELECT_CARD",
-      },
-    },
     DELIVERY: {
       signals: {
         NEXT: "DONED",
-        CALL: "CALLING",
+        ERROR: "CALLING",
       },
-    },
-    SELECT_CARD: {
-      signals: {
-        NEXT: "DELIVERY",
-      },
-    },
-    ERRORED: {
-      type: "END",
     },
     REJECTED: {
       type: "END",
@@ -92,22 +55,76 @@ export const schemaDC: Schema<TargetName, SignalName> = {
     DONED: {
       type: "END",
     },
+    WRITE_SMS: {
+      type: "CLOSE",
+    },
+    PASSPORT_NUMBER: {
+      type: "CLOSE",
+    },
+    CODE_WORD: {
+      type: "CLOSE",
+    },
   },
   signals: {
-    ERROR: "ERRORED",
+    ERROR: "CALLING",
     REJECT: "REJECTED",
-    TO_MK: "MK",
-    CALL: "CALLING",
   },
 };
 
-const mashineDC = createMachine(schemaDC);
-// createMachine - может вернуть ERROR - поэтому сразу рекомендуеться обработать
-// эту ошибку и уверенно использовать API уже после обработки ошибки - инаде даже IDE не подсветит подсказки
-if (mashineDC instanceof Error) throw new Error("mashineDC of Error");
+const street: ModeSchema<TargetName, SignalName> = {
+  states: {
+    WRITE_SMS: {
+      signals: {
+        NEXT: "PASSPORT_FULL",
+        ERROR: "WRITE_SMS",
+      },
+    },
+  },
+};
 
-const flowDC = createActor(mashineDC);
-// createActor - может вернуть ERROR - поэтому сразу рекомендуеться обработать
-// эту ошибку и уверенно использовать API уже после обработки ошибки - инаде даже IDE не подсветит подсказки
-if (flowDC instanceof Error) throw new Error("flowDC of Error");
-flowDC.start("AUTH");
+const base: ModeSchema<TargetName, SignalName> = {
+  states: {
+    WRITE_SMS: {
+      signals: {
+        NEXT: "PASSPORT_NUMBER",
+        ERROR: "WRITE_SMS",
+      },
+    },
+    PASSPORT_NUMBER: {
+      signals: {
+        NEXT: "CODE_WORD",
+        NO_VALID: "PASSPORT_FULL",
+      },
+    },
+    CODE_WORD: {
+      signals: {
+        NEXT: "DELIVERY",
+        NO_VALID: "PASSPORT_FULL",
+      },
+    },
+  },
+};
+
+const schema = createSchema({
+  reference,
+  setting: {
+    init: "street",
+    mods: {
+      base,
+      street,
+    },
+  },
+});
+if (schema instanceof Error) throw schema;
+
+const mashineDC = createMachine(schema);
+if (mashineDC instanceof Error) throw mashineDC;
+
+const actorDC = createActor(mashineDC);
+if (actorDC instanceof Error) throw actorDC;
+
+actorDC.start();
+
+actorDC.send("NEXT");
+schema.checkout("base");
+actorDC.send("NEXT");

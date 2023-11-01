@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { Schema, ModeSchema } from "@/index";
 
 export function mergeSchema<

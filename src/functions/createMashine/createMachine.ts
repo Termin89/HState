@@ -12,7 +12,7 @@ export default function createMachine<
   SignalName extends string,
   ModeNames extends string
 >(
-  schemaObj: SchemaModel<TargetName, SignalName, ModeNames>,
+  schemaObj: SchemaModel<TargetName, SignalName, ModeNames> | Error,
   __context?: Partial<MachineContext<TargetName, SignalName, ModeNames>>
 ): Machine<TargetName, SignalName, ModeNames> {
   const context = Object.assign(
@@ -68,7 +68,7 @@ export default function createMachine<
         `Данная State Machine с именем: "${context.name}" не проинициализированна - переход невозможен`
       );
 
-    if (!!state?.done)
+    if (!!state.done)
       return new ErrorCreateMashine(
         codesErrorCreateMashine.STATE_DONE,
         `Данная State Machine с именем: "${context.name}" находиться в конечном состоянии: ${state?.value} - переход невозможен`
@@ -79,6 +79,13 @@ export default function createMachine<
       state,
       signalName
     );
+
+    if (!(newState instanceof Error) && !!newState.close)
+      return new ErrorCreateMashine(
+        codesErrorCreateMashine.STATE_CLOSE,
+        `Данная State Machine с именем: "${context.name}" стараеться перейти в закрытое состояние: переход в сосояние ${newState?.value} - невозможен`
+      );
+
     return newState;
   };
 
